@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from unicorn import *
 from androidemu.emulator import Emulator
 from UnicornTraceDebugger import udbg
@@ -12,7 +13,7 @@ logging.basicConfig(stream=sys.stdout,
     format="%(asctime)s %(levelname)7s %(name)34s | %(message)s")
 logger = logging.getLogger(__name__)
 
-
+#手动实现库函数的功能
 @native_method
 def __aeabi_memclr(mu, addr, size):
     print('__aeabi_memclr(%x,%d)' % (addr, size))
@@ -34,7 +35,7 @@ def sprintf(mu, buffer, format1, a1, a2):
 if __name__ == "__main__":
     emulator = Emulator()
     #got hook
-    emulator.modules.add_symbol_hook('__aeabi_memclr', emulator.hooker.write_function(__aeabi_memclr) + 1)
+    emulator.modules.add_symbol_hook('__aeabi_memclr', emulator.hooker.write_function(__aeabi_memclr) + 1) #注意这里也要声明，参照androidemu里面hook.py的写法
     emulator.modules.add_symbol_hook('__aeabi_memcpy', emulator.hooker.write_function(__aeabi_memcpy) + 1)
     emulator.modules.add_symbol_hook('sprintf', emulator.hooker.write_function(sprintf) + 1)
 
@@ -53,5 +54,5 @@ if __name__ == "__main__":
     except UcError as e:
         list_tracks = dbg.get_tracks()
         for addr in list_tracks[-100:-1]:
-            print (hex(addr - 0xcbc66000))
+            print (hex(addr - 0xcbc66000)) #这里0xcbc66000是模拟运行中模块的基地址
         print (e)
