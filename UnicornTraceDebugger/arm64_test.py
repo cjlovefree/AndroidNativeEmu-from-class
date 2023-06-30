@@ -72,7 +72,8 @@ except UcError as e:
     #print(f"UC run error {e}")
     list_tracks = dbg.get_tracks()
     for addr in list_tracks[-100:-1]:
-        print (hex(addr - 0xcbc66000)) #这里0xcbc66000是模拟运行中模块的基地址
+        #print (hex(addr - 0xcbc66000)) #这里0xcbc66000是模拟运行中模块的基地址
+        print (hex(addr))#这个文件是从地址0开始加载的。所以，基地址不用-0xcbc66000
     print (e)
 
 
