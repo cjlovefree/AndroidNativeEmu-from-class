@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 from unicorn import *
 from unicorn.arm64_const import *
 import sys
@@ -94,10 +95,10 @@ def _dbg_trace(mu, address, size, self):
     return _dbg_trace_internal(mu, address, size, self)
 
 def _dbg_memory(mu, access, address, length, value, self):
-    pc = mu.reg_read(ARM64_REG_PC)
+    pc = mu.reg_read(UC_ARM64_REG_PC)
     print("memory error: pc: %x access: %x address: %x length: %x value: %x" %
           (pc, access, address, length, value))
-    _dbg_trace_internal(mu, pc, 4, self)
+    _dbg_trace_internal(mu, pc, 4, self)#这里执行的每个指令占的字节大小要根据实际情况改一下，大部分arm64还是4位，有一些可能是8位
     mu.emu_stop()
     return True
     
@@ -106,6 +107,7 @@ def _dbg_trace_internal(mu, address, size, self):
     print("======================= Registers =======================")
     self.dump_reg()
     print("======================= Disassembly =====================")
+    #arm64已经没有thumb模式了，这里可能也要根据实际情况调整
     if size == 4:
         mode = 'arm'
     else:
@@ -296,6 +298,8 @@ class UnicornDebugger:
 
     def set_symbol_name_handler(self, handler):
         self.sym_handler = handler
+
+
 
 
 '''
