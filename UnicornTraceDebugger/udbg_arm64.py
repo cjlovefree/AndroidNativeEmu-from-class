@@ -296,3 +296,85 @@ class UnicornDebugger:
 
     def set_symbol_name_handler(self, handler):
         self.sym_handler = handler
+
+
+'''
+from capstone import *
+from capstone.arm64 import *
+
+# 回调函数，用于打印寄存器和指令信息
+def hook_code(uc, address, size, user_data):
+    # 获取寄存器的值
+    regs = uc.reg_read_batch([
+        UC_ARM64_REG_X0, UC_ARM64_REG_X1, UC_ARM64_REG_X2,
+        UC_ARM64_REG_X3, UC_ARM64_REG_X4, UC_ARM64_REG_X5,
+        UC_ARM64_REG_X6, UC_ARM64_REG_X7, UC_ARM64_REG_X8,
+        UC_ARM64_REG_X9, UC_ARM64_REG_X10, UC_ARM64_REG_X11,
+        UC_ARM64_REG_X12, UC_ARM64_REG_X13, UC_ARM64_REG_X14,
+        UC_ARM64_REG_X15, UC_ARM64_REG_X16, UC_ARM64_REG_X17,
+        UC_ARM64_REG_X18, UC_ARM64_REG_X19, UC_ARM64_REG_X20,
+        UC_ARM64_REG_X21, UC_ARM64_REG_X22, UC_ARM64_REG_X23,
+        UC_ARM64_REG_X24, UC_ARM64_REG_X25, UC_ARM64_REG_X26,
+        UC_ARM64_REG_X27, UC_ARM64_REG_X28, UC_ARM64_REG_X29,
+        UC_ARM64_REG_X30, UC_ARM64_REG_SP
+    ])
+    
+    # 获取当前指令的机器码
+    code = uc.mem_read(address, size)
+    
+    # 创建capstone引擎实例
+    md = Cs(CS_ARCH_ARM64, CS_MODE_ARM)
+    
+    # 将机器码转换为汇编指令
+    asm = list(md.disasm(code, address))
+    instruction = asm[0].mnemonic + " " + asm[0].op_str
+    
+    # 打印寄存器和指令信息
+    print("Instruction Address: 0x{:x}".format(address))
+    print("Registers:")
+    for reg, value in regs.items():
+        print("{}: 0x{:x}".format(reg, value))
+    print("Instruction Code: {}".format(instruction))
+    print()
+    
+
+'''
+
+'''
+# 回调函数，用于打印寄存器和指令信息
+def hook_code(uc, address, size, user_data):
+    # 获取寄存器的值
+    regs = uc.reg_read_batch([
+        UC_ARM64_REG_X0, UC_ARM64_REG_X1, UC_ARM64_REG_X2,
+        UC_ARM64_REG_X3, UC_ARM64_REG_X4, UC_ARM64_REG_X5,
+        UC_ARM64_REG_X6, UC_ARM64_REG_X7, UC_ARM64_REG_X8,
+        UC_ARM64_REG_X9, UC_ARM64_REG_X10, UC_ARM64_REG_X11,
+        UC_ARM64_REG_X12, UC_ARM64_REG_X13, UC_ARM64_REG_X14,
+        UC_ARM64_REG_X15, UC_ARM64_REG_X16, UC_ARM64_REG_X17,
+        UC_ARM64_REG_X18, UC_ARM64_REG_X19, UC_ARM64_REG_X20,
+        UC_ARM64_REG_X21, UC_ARM64_REG_X22, UC_ARM64_REG_X23,
+        UC_ARM64_REG_X24, UC_ARM64_REG_X25, UC_ARM64_REG_X26,
+        UC_ARM64_REG_X27, UC_ARM64_REG_X28, UC_ARM64_REG_X29,
+        UC_ARM64_REG_X30, UC_ARM64_REG_SP
+    ])
+    
+    # 获取当前指令的机器码
+    code = uc.mem_read(address, size)
+    
+    # 打印寄存器和指令信息
+    print("Instruction Address: 0x{:x}".format(address))
+    print("Registers:")
+    for reg, value in regs.items():
+        print("{}: 0x{:x}".format(reg, value))
+    print("Instruction Code:", code.hex())
+    print()
+    
+
+'''
+
+
+
+
+
+
+
