@@ -68,7 +68,12 @@ mu.reg_write(UC_ARM64_REG_X0, 0)#this指针用不到先直接赋值0
 mu.reg_write(UC_ARM64_REG_X2, data_base+32) #用来存储处理后的数据
 
 # 修复 Got 表
-#mu.mem_write(image_base + 0x0889978, b"\x50\x38\x99\x00\x00\x00\x00\x00") #fix strlen()
+'''
+这个got表的fix只能fix本so已经包含的自己写的函数,对于系统库函数strlen这些是fix不了的，这是因为系统库libc.so没有（自动/正确）布局在内存中,
+只能另外自己手动实现这些函数的功能，把返回结果补到对应的寄存器里面。
+'''
+#mu.mem_write(image_base + 0x0889978, b"\x50\x38\x99\x00\x00\x00\x00\x00")
+
 
 # 设置 Hook
 mu.hook_add(UC_HOOK_CODE, hook_code, None)
