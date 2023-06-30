@@ -12,6 +12,8 @@ logger = logging.getLogger(__name__)
 
 def hook_code(uc, address, size, user_data):
     print(f">>> Tracing instruction at 0x{address:x}, run size = 0x{size:x}")
+    
+    
 
 
 def hook_memory(uc, access, address, size, value, user_data):
@@ -36,8 +38,7 @@ def skip_instruction(uc, address, size, user_data):
 a1 = b'JCKEHKGKIPQAKIL'
 mu = Uc(UC_ARCH_ARM64, UC_MODE_ARM)
 dbg = udbg_arm64.UnicornDebugger(mu)
-
-
+#dbg.add_bpt(0x64f1b8)#添加调试断点
 
 # 分配 so 内存
 image_base = 0x0
