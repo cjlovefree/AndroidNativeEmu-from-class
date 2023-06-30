@@ -1,11 +1,10 @@
+
 # -*- coding: UTF-8 -*-
 from unicorn import *
 from unicorn.arm64_const import *
 from UnicornTraceDebugger import udbg_arm64
 import logging
 import sys
-
-#以下演示调试器在arm64 下的调用。
 
 logging.basicConfig(stream=sys.stdout,
     level=logging.DEBUG,
@@ -21,9 +20,25 @@ def hook_memory(uc, access, address, size, value, user_data):
     print(f">>> Memory err pc:0x{pc:x} address:0x{address:x}, size:0x{size:x}")
 
 
+# 定义钩子函数，用于跳过指定地址的指令
+def skip_instruction(uc, address, size, user_data):
+    # 指定要跳过的指令地址
+    skip_address = 0x0064F1B8 #这里跳过strlen函数
+
+    # 判断当前指令地址是否需要跳过
+    if address == skip_address:
+        # 跳过指令
+        uc.reg_write(UC_ARM64_REG_PC, address + size)
+        uc.reg_write(UC_ARM64_REG_W0,15) #写15是因为strlen实际执行的结果是15
+
+
+
+
 a1 = b'JCKEHKGKIPQAKIL'
 mu = Uc(UC_ARCH_ARM64, UC_MODE_ARM)
 dbg = udbg_arm64.UnicornDebugger(mu)
+
+
 
 # 分配 so 内存
 image_base = 0x0
@@ -53,11 +68,13 @@ mu.reg_write(UC_ARM64_REG_X0, 0)#this指针用不到先直接赋值0
 mu.reg_write(UC_ARM64_REG_X2, data_base+32) #用来存储处理后的数据
 
 # 修复 Got 表
-#mu.mem_write(image_base + 0x1EDB0, b"\xD9\x98\x00\x00")
+#mu.mem_write(image_base + 0x0889978, b"\x50\x38\x99\x00\x00\x00\x00\x00") #fix strlen()
 
 # 设置 Hook
 mu.hook_add(UC_HOOK_CODE, hook_code, None)
 mu.hook_add(UC_HOOK_MEM_UNMAPPED, hook_memory, None)
+mu.hook_add(UC_HOOK_CODE, skip_instruction, None)
+
 
 # 设置需要 Run 的函数地址
 func_start = image_base + 0x064F1A0# + 0x1
@@ -68,13 +85,17 @@ try:
     x2 = mu.reg_read(UC_ARM64_REG_X2)
     result = mu.mem_read(x2, 16)
     print(result.hex())
+    print("加密码是："+result.decode('ascii'))
+
+
 except UcError as e:
     #print(f"UC run error {e}")
     list_tracks = dbg.get_tracks()
     for addr in list_tracks[-100:-1]:
-        #print (hex(addr - 0xcbc66000)) #这里0xcbc66000是模拟运行中模块的基地址
-        print (hex(addr))#这个文件是从地址0开始加载的。所以，基地址不用-0xcbc66000
+        print (hex(addr)) #这里0xcbc66000是模拟运行中模块的基地址
     print (e)
+    
+
 
 
 
